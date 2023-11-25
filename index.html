@@ -1,3 +1,73 @@
-<h1>This is a test</h1>
-<script type="text/javascript" src="Pseudoku.js"></script>
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh; /* Ensure the entire viewport height is covered */
+      background-color: #f0f0f0; /* Optional background color for the page */
+    }
+    canvas {
+      border: 1px solid black;
+    }
+  </style>
+  <script type="text/javascript" src="Pseudoku.js"></script>
+</head>
+<body>
+  <canvas id="sudokuCanvas" width="400" height="400"></canvas>
+
+  <script>
+    // Your Graph class and Sudoku graph creation code here...
+
+    // Function to draw the Sudoku graph on the canvas
+    function drawSudokuGraph(graph) {
+      const canvas = document.getElementById("sudokuCanvas");
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw edges
+      for (const [vertex1, neighbors] of graph.edges) {
+        const position1 = graph.vertices.get(vertex1);
+        for (const vertex2 of neighbors) {
+          const position2 = graph.vertices.get(vertex2);
+          ctx.beginPath();
+          ctx.moveTo(position1.x +100, position1.y +100);
+          ctx.lineTo(position2.x+100, position2.y+100);
+          ctx.strokeStyle = "green";
+          ctx.stroke();
+        }
+      }
+
+      // Draw vertices
+      for (const [vertex, position] of graph.vertices) {
+        const x = position.x +100;
+        const y = position.y +100;
+
+        // Draw circle
+        ctx.beginPath();
+        ctx.arc(x, y, 10, 0, 2 * Math.PI);
+        ctx.fillStyle = "lightblue";
+        ctx.fill();
+        ctx.strokeStyle = "black";
+        ctx.stroke();
+
+        // Draw text in the middle of the circle
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(vertex, x, y);
+      }
+
+      
+    }
+
+    // Call the drawSudokuGraph function with your sudokuGraph
+    drawSudokuGraph(sudokuGraph);
+  </script>
+</body>
+</html>
 
