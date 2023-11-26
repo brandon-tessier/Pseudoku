@@ -59,11 +59,12 @@
             // Draw edges
             for (const [vertex1, neighbors] of graph.edges) {
                 const position1 = graph.vertices.get(vertex1);
+
                 for (const vertex2 of neighbors) {
                     const position2 = graph.vertices.get(vertex2);
                     ctx.beginPath();
-                    ctx.moveTo(position1.x + 100, position1.y + 100);
-                    ctx.lineTo(position2.x + 100, position2.y + 100);
+                    ctx.moveTo(position1.x*1.7 + 17, position1.y*1.7 + 17);
+                    ctx.lineTo(position2.x*1.7 + 17, position2.y*1.7 + 17);
                     ctx.strokeStyle = edge_color;
                     ctx.stroke();
                 }
@@ -71,12 +72,12 @@
 
             // Draw vertices
             for (const [vertex, position] of graph.vertices) {
-                const x = position.x + 100;
-                const y = position.y + 100;
+                const x = position.x*1.7 + 17;
+                const y = position.y*1.7 + 17;
 
                 // Draw circle
                 ctx.beginPath();
-                ctx.arc(x, y, 10, 0, 2 * Math.PI);
+                ctx.arc(x, y, 13, 0, 2 * Math.PI);
                 ctx.fillStyle = "lightblue";
                 ctx.fill();
                 ctx.strokeStyle = "black";
@@ -86,6 +87,7 @@
                 ctx.fillStyle = "black";
                 ctx.textAlign = "center";
                 ctx.textBaseline = "middle";
+                ctx.font = "17px Arial";
                 ctx.fillText(vertex, x, y);
             }
 
