@@ -30,6 +30,7 @@
             text-align: center;
             border: 1px solid #000;
         }
+        
     </style>
     <script type="text/javascript" src="Pseudoku.js"></script>
 </head>
@@ -38,12 +39,13 @@
     <canvas id="sadCanvas" width="400" height="400"></canvas>
     <canvas id="sudokuCanvas" width="400" height="400"></canvas>
     <canvas id="happyCanvas" width="400" height="400"></canvas>
+    <canvas id="symbolCanvas" width="200" height="50"></canvas>
 
     <script>
         // Your Graph class and Sudoku graph creation code here...
 
         // Function to draw the Sudoku graph on the canvas
-        function drawSudokuGraph(graph,canvas_id,edge_color) {
+        function drawSudokuGraph(graph, canvas_id, edge_color) {
             const canvas = document.getElementById(canvas_id);
             const ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -83,11 +85,100 @@
 
 
         }
+        // Function to handle canvas click events
+        function handleCanvasClick(event) {
+            const canvas = event.target;
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            const cellSize = canvas.width / 4;
+            const col = Math.floor(x / cellSize);
+            const row = Math.floor(y / cellSize);
+
+            // Handle the click on the Sudoku board
+            // For example, you can add a number to the board
+            // using the addSymbol method of the SudokuBoard class.
+            //sudokuBoard.addSymbol(row + 1, col + 1, 1);
+            placesymbol(row+1, col+1, selectedSymbol, sudoku, happySG, sadSG);
+
+            // After making changes, redraw the board
+            sudoku.drawOnCanvas(canvas);
+            drawSudokuGraph(happySG, "happyCanvas", "green");
+            drawSudokuGraph(sadSG, "sadCanvas", "red");
+
+        }
+        // Function to handle canvas click events for symbol selection
+        function handleSymbolCanvasClick(event) {
+            const symbolCanvas = event.target;
+            const rect = symbolCanvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            const cellSize = symbolCanvas.width / 4;
+            const col = Math.floor(x / cellSize);
+            const row = Math.floor(y / cellSize);
+
+            // Handle the click on the symbol canvas
+            // For example, you can set the selected symbol based on the clicked position.
+            selectedSymbol = row * 4 + col + 1;
+
+            // After making changes, redraw the symbol canvas
+            drawSymbolCanvas(symbolCanvas);
+        }
+
+        // Function to draw the symbol canvas
+        function drawSymbolCanvas(canvas) {
+            const ctx = canvas.getContext('2d');
+            const cellSize = canvas.width / 4;
+
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw the grid
+            ctx.beginPath();
+            for (let i = 1; i < 4; i++) {
+                const x = i * cellSize;
+                const y = i * cellSize;
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+            }
+            ctx.stroke();
+
+            // Draw the numbers
+            ctx.font = `${cellSize / 2}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    const x = j * cellSize + cellSize / 2;
+                    const y = i * cellSize + cellSize / 2;
+                    const number = i * 4 + j + 1;
+                    ctx.fillText(number, x, y);
+                }
+            }
+        }
 
         // Call the drawSudokuGraph function with your sudokuGraph
-        drawSudokuGraph(happySG, "happyCanvas","green");
-        drawSudokuGraph(sadSG,"sadCanvas","red");
+        drawSudokuGraph(happySG, "happyCanvas", "green");
+        drawSudokuGraph(sadSG, "sadCanvas", "red");
+        let selectedSymbol = 1;
+        // Draw the initial state on the canvas
+        const canvas = document.getElementById('sudokuCanvas');
+        sudoku.drawOnCanvas(canvas);
         //document.body.appendChild(sudoku.toHTMLTable());
+
+        // Add click event listener to the canvas
+        canvas.addEventListener('click', handleCanvasClick);
+
+        // Draw the initial state on the symbol canvas
+        const symbolCanvas = document.getElementById('symbolCanvas');
+        drawSymbolCanvas(symbolCanvas);
+
+        // Add click event listener to the symbol canvas
+        symbolCanvas.addEventListener('click', handleSymbolCanvasClick);
     </script>
 </body>
 
