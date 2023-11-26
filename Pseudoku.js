@@ -244,6 +244,42 @@ class SudokuBoard {
 
         return table;
     }
+    // Method to draw the Sudoku board on the canvas
+    drawOnCanvas(canvas) {
+        const ctx = canvas.getContext('2d');
+        const cellSize = canvas.width / 4;
+
+        // Clear the canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw the grid
+        ctx.beginPath();
+        for (let i = 1; i < 4; i++) {
+            const x = i * cellSize;
+            const y = i * cellSize;
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, canvas.height);
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvas.width, y);
+        }
+        ctx.stroke();
+
+        // Draw the numbers
+        ctx.font = `${cellSize / 2}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                const x = j * cellSize + cellSize / 2;
+                const y = i * cellSize + cellSize / 2;
+                const number = this.board[i][j];
+                if (number !== 0) {
+                    ctx.fillText(number, x, y);
+                }
+            }
+        }
+    }
+
 }
 
 function placesymbol(row,col,sym,sb,happy,sad){
@@ -256,6 +292,7 @@ function placesymbol(row,col,sym,sb,happy,sad){
     }
     return false;
 }
+
 
 // Example Usage:
 
@@ -283,7 +320,7 @@ for (let i = 1; i <= 4; i++) {
 }
 
 
-placesymbol(4,1,2,sudoku,happySG,sadSG);
+
 
 
 // Create a 4x4 Sudoku graph
