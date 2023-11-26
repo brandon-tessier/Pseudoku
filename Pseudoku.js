@@ -134,21 +134,21 @@ class SudokuBoard {
     }
 
     // Method to check if a move is valid in the Sudoku board
-    isValidMove(row, col, num) {
+    isValidMove(row, col, sym) {
         // Check if the number is already in the row or column
         for (let i = 0; i < 4; i++) {
-            if (this.board[row][i] === num || this.board[i][col] === num) {
+            if (this.board[row - 1][i] === sym || this.board[i][col - 1] === sym) {
                 return false;
             }
         }
 
         // Check if the number is already in the 2x2 box
-        const boxStartRow = Math.floor(row / 2) * 2;
-        const boxStartCol = Math.floor(col / 2) * 2;
+        const boxStartRow = Math.floor((row - 1) / 2) * 2;
+        const boxStartCol = Math.floor((col - 1) / 2) * 2;
 
         for (let i = boxStartRow; i < boxStartRow + 2; i++) {
             for (let j = boxStartCol; j < boxStartCol + 2; j++) {
-                if (this.board[i][j] === num) {
+                if (this.board[i][j] === sym) {
                     return false;
                 }
             }
@@ -171,7 +171,7 @@ class SudokuBoard {
         for (let num = 1; num <= 4; num++) {
             if (this.isValidMove(row, col, num)) {
                 // Try placing the number in the empty cell
-                this.board[row][col] = num;
+                this.board[row - 1][col - 1] = num;
 
                 // Recursively try to solve the rest of the board
                 if (this.solve()) {
@@ -179,7 +179,7 @@ class SudokuBoard {
                 }
 
                 // If the current configuration doesn't lead to a solution, backtrack
-                this.board[row][col] = 0;
+                this.board[row - 1][col - 1] = 0;
             }
         }
 
@@ -192,7 +192,7 @@ class SudokuBoard {
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
                 if (this.board[i][j] === 0) {
-                    return [i, j];
+                    return [i + 1, j + 1];
                 }
             }
         }
@@ -208,32 +208,53 @@ class SudokuBoard {
     }
 
     addSymbol(row, col, sym) {
-        if (row < 0 || row >= 4 || col < 0 || col >= 4 || sym < 1 || sym > 4) {
+        if (row < 1 || row > 4 || col < 1 || col > 4 || sym < 1 || sym > 4) {
             console.error("Invalid move. Please provide valid row, column, and number.");
             return false;
         }
 
         if (this.isValidMove(row, col, sym)) {
-            this.board[row][col] = sym;
-            console.log(`Symbol ${sym} added to row ${row + 1}, column ${col + 1}.`);
+            this.board[row - 1][col - 1] = sym;
+            console.log(`Symbol ${sym} added to row ${row}, column ${col}.`);
             return true;
         } else {
-            console.error(`Invalid move. Cannot add ${sym} to row ${row + 1}, column ${col + 1}.`);
+            console.error(`Invalid move. Cannot add ${sym} to row ${row}, column ${col}.`);
             return false;
         }
     }
 
     getBox(row, col) {
-        return (2 * Math.floor(row / 2)) + (Math.floor(col / 2));
+        return (2 * Math.floor((row - 1) / 2)) + (Math.floor((col - 1) / 2)) + 1;
+    }
+
+    toHTMLTable() {
+        const table = document.createElement('table');
+
+        for (let i = 0; i < 4; i++) {
+            const row = document.createElement('tr');
+
+            for (let j = 0; j < 4; j++) {
+                const cell = document.createElement('td');
+                cell.textContent = this.board[i][j];
+                row.appendChild(cell);
+            }
+
+            table.appendChild(row);
+        }
+
+        return table;
     }
 }
 
-function linktograph(row,col,sym,sb,sg){
+function placesymbol(row,col,sym,sb,happy,sad){
     if(sb.addSymbol(row,col,sym)){
         const box = sb.getBox(row,col);
-        sg.addTile("R"+(row+1),"C"+(col+1),"S"+(sym),"B"+(box+1));
+        happy.addTile("R"+(row),"C"+(col),"S"+(sym),"B"+(box));
+        sad.removeTile("R"+(row),"C"+(col),"S"+(sym),"B"+(box));
         //("R4", "C4", "S2", "B4");
+        return true;
     }
+    return false;
 }
 
 // Example Usage:
@@ -250,14 +271,19 @@ const initialConfig = [
 
 sudoku.initializeBoard(initialConfig);
 const happySG = new SudokuGraph();
+const sadSG = new SudokuGraph();
 
-console.log("Initial Board:");
-sudoku.printBoard();
-linktograph(3,0,2,sudoku,happySG);
-console.log("Vertices:", happySG.getVertices());
-console.log("Edges:", happySG.getEdges());
-console.log("\nBoard after player's move:");
-sudoku.printBoard();
+for (let i = 1; i <= 4; i++) {
+    for(let j = 1; j <= 4; j++){
+        sadSG.addEdge("R"+i,"C"+j);
+        sadSG.addEdge("R"+i,"S"+j);
+        sadSG.addEdge("C"+i,"S"+j);
+        sadSG.addEdge("S"+i,"B"+j);
+    }
+}
+
+
+placesymbol(4,1,2,sudoku,happySG,sadSG);
 
 
 // Create a 4x4 Sudoku graph
