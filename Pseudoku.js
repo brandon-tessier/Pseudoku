@@ -244,6 +244,14 @@ class SudokuBoard {
 
         return table;
     }
+    checkifempty(row, col) {
+        if (this.board[row-1][col - 1] == 0) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
     // Method to draw the Sudoku board on the canvas
     drawOnCanvas(canvas) {
         const ctx = canvas.getContext('2d');
@@ -253,16 +261,37 @@ class SudokuBoard {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Draw the grid
-        ctx.beginPath();
+        
         for (let i = 1; i < 4; i++) {
+            ctx.beginPath();
             const x = i * cellSize;
-            const y = i * cellSize;
+
             ctx.moveTo(x, 0);
             ctx.lineTo(x, canvas.height);
+            if(i==2){
+                ctx.lineWidth = 6;
+            }
+            else{
+                ctx.lineWidth = 1;
+            }
+            ctx.stroke();
+        }
+        for (let i = 1; i < 4; i++) {
+            ctx.beginPath();
+            const y = i * cellSize;
+
             ctx.moveTo(0, y);
             ctx.lineTo(canvas.width, y);
+            if(i==2){
+                ctx.lineWidth = 6;
+            }
+            else{
+                ctx.lineWidth = 1;
+            }
+            ctx.stroke();
         }
-        ctx.stroke();
+        
+        
 
         // Draw the numbers
         ctx.font = `${cellSize / 2}px Arial`;
@@ -282,11 +311,14 @@ class SudokuBoard {
 
 }
 
-function placesymbol(row,col,sym,sb,happy,sad){
-    if(sb.addSymbol(row,col,sym)){
-        const box = sb.getBox(row,col);
-        happy.addTile("R"+(row),"C"+(col),"S"+(sym),"B"+(box));
-        sad.removeTile("R"+(row),"C"+(col),"S"+(sym),"B"+(box));
+function placesymbol(row, col, sym, sb, happy, sad) {
+    if (!(sb.checkifempty(row, col))) {
+        return false;
+    }
+    if (sb.addSymbol(row, col, sym)) {
+        const box = sb.getBox(row, col);
+        happy.addTile("R" + (row), "C" + (col), "S" + (sym), "B" + (box));
+        sad.removeTile("R" + (row), "C" + (col), "S" + (sym), "B" + (box));
         //("R4", "C4", "S2", "B4");
         return true;
     }
@@ -311,11 +343,11 @@ const happySG = new SudokuGraph();
 const sadSG = new SudokuGraph();
 
 for (let i = 1; i <= 4; i++) {
-    for(let j = 1; j <= 4; j++){
-        sadSG.addEdge("R"+i,"C"+j);
-        sadSG.addEdge("R"+i,"S"+j);
-        sadSG.addEdge("C"+i,"S"+j);
-        sadSG.addEdge("S"+i,"B"+j);
+    for (let j = 1; j <= 4; j++) {
+        sadSG.addEdge("R" + i, "C" + j);
+        sadSG.addEdge("R" + i, "S" + j);
+        sadSG.addEdge("C" + i, "S" + j);
+        sadSG.addEdge("S" + i, "B" + j);
     }
 }
 
