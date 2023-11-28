@@ -21,7 +21,7 @@
 }
 
 .symbol-container {
-    margin-top: 20px; /* Adjust the space between the canvases and the symbol canvas */
+    margin-top: -40px; /* Adjust the space between the canvases and the symbol canvas */
     display: flex;
     justify-content: center; /* This centers the symbol canvas horizontally */
 }
@@ -40,9 +40,9 @@
 
 <body>
     <div class="canvas-container">
-        <canvas id="sadCanvas" width="400" height="400"></canvas>
-        <canvas id="sudokuCanvas" width="400" height="400"></canvas>
-        <canvas id="happyCanvas" width="400" height="400"></canvas>
+        <canvas id="sadCanvas" width="300" height="300"></canvas>
+        <canvas id="sudokuCanvas" width="200" height="200"></canvas>
+        <canvas id="happyCanvas" width="300" height="300"></canvas>
     </div>
     <div class="symbol-container">
         <canvas id="symbolCanvas" width="200" height="50"></canvas>
@@ -63,8 +63,8 @@
                 for (const vertex2 of neighbors) {
                     const position2 = graph.vertices.get(vertex2);
                     ctx.beginPath();
-                    ctx.moveTo(position1.x*1.7 + 17, position1.y*1.7 + 17);
-                    ctx.lineTo(position2.x*1.7 + 17, position2.y*1.7 + 17);
+                    ctx.moveTo(position1.x*1.2 + 17, position1.y*1.2 + 17);
+                    ctx.lineTo(position2.x*1.2 + 17, position2.y*1.2 + 17);
                     ctx.strokeStyle = edge_color;
                     ctx.stroke();
                 }
@@ -72,8 +72,8 @@
 
             // Draw vertices
             for (const [vertex, position] of graph.vertices) {
-                const x = position.x*1.7 + 17;
-                const y = position.y*1.7 + 17;
+                const x = position.x*1.2 + 17;
+                const y = position.y*1.2 + 17;
 
                 // Draw circle
                 ctx.beginPath();
